@@ -56,49 +56,7 @@ diff Gemfile.1.11.2.lock Gemfile.1.12.5.lock
 >    1.12.5
 ```
 
-## Why Does It Even Record It?
+## Why Does It Record It?
 
-For path sources.
-
-In the same 1.0.0.beta1 commit, the LockfileParser has
-[this comment and code](https://github.com/bundler/bundler/blob/2b9094e9d0f0cc21d8acf503da98fd908e29f6ff/lib/bundler/lockfile_parser.rb#L52-L73):
-
-```ruby
-    def parse_dependency(line)
-      if line =~ %r{^ {2}#{NAME_VERSION}(!)?$}
-        name, version, pinned = $1, $2, $3
-
-        dep = Bundler::Dependency.new(name, version)
-
-        if pinned
-          dep.source = @specs.find { |s| s.name == dep.name }.source
-
-          # Path sources need to know what the default name / version
-          # to use in the case that there are no gemspecs present. A fake
-          # gemspec is created based on the version set on the dependency
-          # TODO: Use the version from the spec instead of from the dependency
-          if version =~ /^= (.+)$/ && dep.source.is_a?(Bundler::Source::Path)
-            dep.source.name    = name
-            dep.source.version = $1
-          end
-        end
-
-        @dependencies << dep
-      end
-    end
-```
-
-And this code is largely unchanged today
-([1.12.5 version](https://github.com/bundler/bundler/blob/a65a2db118ed714586ac4c56a0584c97bf0305df/lib/bundler/lockfile_parser.rb#L172-L197)).
-
-## So ... That's It?
-
-Yeup.
-
-## So ... I Can Probably Ignore It?
-
-Yeah, probably.
-
-## What If You're Wrong?
-
-There's a good chance I am. Take to the Twitters and give me what for! Submit a PR!
+Mostly to ensure the Dependency instance has its Source instance restored. For path sources, it also does an extra
+bit. ([1.12.5 version](https://github.com/bundler/bundler/blob/a65a2db118ed714586ac4c56a0584c97bf0305df/lib/bundler/lockfile_parser.rb#L172-L197)).

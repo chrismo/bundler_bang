@@ -2,7 +2,7 @@ require 'fileutils'
 
 FileUtils.rm Dir.glob("Gemfile*lock")
 
-installed = `gem list bundler`.scan(/\Abundler \((.*)\)/).join.split(',')
+installed = `gem list bundler`.scan(/\Abundler \((.*)\)/).join.split(',').map(&:strip!)
 
 def puts_system(cmd)
   puts cmd
@@ -10,7 +10,7 @@ def puts_system(cmd)
 end
 
 # 1.0.22 1.1.5 1.2.5 => don't work with RubyGems 2.0
-# 1.3.6 1.5.3 1.6.9  => doesn't support :source option with `gem` command
+# 1.3.6 1.5.3 1.6.9  => don't support :source option with `gem` command
 versions = %w(1.7.15 1.8.9 1.9.10 1.10.5 1.11.2 1.12.5)
 versions.each do |bundler_ver|
   puts_system("gem install bundler --version #{bundler_ver}") unless installed.include?(bundler_ver)
@@ -19,5 +19,6 @@ versions.each do |bundler_ver|
   puts '-' * 80
 end
 
-
-
+versions[0..-2].zip(versions[1..-1]).each do |a, b|
+  puts_system("diff Gemfile.#{a}.lock Gemfile.#{b}.lock")
+end

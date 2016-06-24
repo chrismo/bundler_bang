@@ -10,6 +10,24 @@ some code can help.
 It's no more complicated then when a declared dependency in a Gemfile has an explicit source attached to it,
 whether that comes from a source block, a `source:` option, or `git` or `file` source.
 
+```ruby
+source 'https://rubygems.org'
+
+# no bang
+gem 'rack'
+
+# bang
+gem 'ast', source: 'https://rubygems.org'
+
+# bang
+source 'https://rubygems.org' do
+  gem 'needle'
+end
+
+# bang
+gem 'slop', git: 'https://github.com/leejarvis/slop.git'
+```
+
 ## Which Version of Bundler Changed This?
 
 It's at least been this way back to 1.7.x which first supported source blocks. The `!` itself goes back to
@@ -17,6 +35,26 @@ It's at least been this way back to 1.7.x which first supported source blocks. T
 
 All of the generated lockfiles in this repo are identical (except for `BUNDLED WITH` in 1.10+). You can re-create
 them yourself with the included run.rb script.
+
+```
+diff Gemfile.1.7.15.lock Gemfile.1.8.9.lock
+diff Gemfile.1.8.9.lock Gemfile.1.9.10.lock
+diff Gemfile.1.9.10.lock Gemfile.1.10.5.lock
+21a22,24
+>
+> BUNDLED WITH
+>    1.10.5
+diff Gemfile.1.10.5.lock Gemfile.1.11.2.lock
+24c24
+<    1.10.5
+---
+>    1.11.2
+diff Gemfile.1.11.2.lock Gemfile.1.12.5.lock
+24c24
+<    1.11.2
+---
+>    1.12.5
+```
 
 ## Why Does It Even Record It?
 
@@ -63,4 +101,4 @@ Yeah, probably.
 
 ## What If You're Wrong?
 
-There's a good chance I am. Submit a PR!
+There's a good chance I am. Take to the Twitters and give me what for! Submit a PR!
